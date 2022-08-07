@@ -162,11 +162,8 @@ public class MyNetty {
         ByteBuf buf = Unpooled.copiedBuffer("Hello Netty".getBytes(StandardCharsets.UTF_8));
         //客户端刷写数据
         future = client.writeAndFlush(buf);
-        //阻塞等待数据成功发送
-        future = future.sync();
-
-        //阻塞等待服务连接断开
-        future.channel().closeFuture().sync();
+        //阻塞等待数据成功发送并阻塞等待Client断开连接
+        future.sync().channel().closeFuture().sync();
         out.println("Client断开连接~~~");
     }
 
@@ -184,8 +181,7 @@ public class MyNetty {
 
         //对于服务端Accept后 -> Bind
         future = server.bind(new InetSocketAddress("192.168.2.103", 9090));
+        //阻塞等待连接成功并阻塞等待Server断开连接
         future.sync().channel().closeFuture().sync();
-
-        out.println("Server断开连接~~~");
     }
 }
